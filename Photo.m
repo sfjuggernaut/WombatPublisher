@@ -16,7 +16,7 @@
 // POST image via JSON
 - (void)Post:(UIImage *)picture
 {
-    NSURL *url = [NSURL URLWithString:@"http://localhost:3000/"];
+    NSURL *url = [NSURL URLWithString:@"http://localhost:3000"];
     AFHTTPClient *client = [[AFHTTPClient alloc] initWithBaseURL:url];
     
     NSData *data = UIImageJPEGRepresentation(picture, 0.2);
@@ -28,12 +28,25 @@
     AFHTTPRequestOperation *operation = [[[AFHTTPRequestOperation alloc] initWithRequest:request] autorelease];
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *op, id responseObj) {
         NSLog(@"success: %@", operation.responseString);
+        [self showMessage:@"Wombat successfully entered into the world!"];
     } failure:^(AFHTTPRequestOperation *op, NSError *error) {
-        NSLog(@"[Error]: (%@ %@) %@", [operation.request HTTPMethod], [[operation.request URL] relativePath], operation.error);
+        NSString *msg = [NSString stringWithFormat:@"[Error]: (%@ %@) %@", [operation.request HTTPMethod], [[operation.request URL] relativePath], operation.error];
+        NSLog(msg);
+        [self showMessage:msg];
     }];
     
     NSOperationQueue *queue = [[[NSOperationQueue alloc] init] autorelease];
     [queue addOperation:operation];
+}
+
+- (void)showMessage:(NSString *)msg {
+    UIAlertView *message = [[UIAlertView alloc] initWithTitle:nil
+                                                      message:msg
+                                                     delegate:nil
+                                            cancelButtonTitle:@"OK"
+                                            otherButtonTitles:nil];
+    
+    [message show];
 }
 
 @end
